@@ -67,9 +67,10 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)\lib\battlezone2.lib;$(SolutionDir)\lib\ExtraUtilities2.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>ExtraUtilities2.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);battlezone2.lib;ExtraUtilities2.lib;</AdditionalDependencies>
+      <DelayLoadDLLs>ExtraUtilities2.dll</DelayLoadDLLs>
       <SupportUnloadOfDelayLoadedDLL>true</SupportUnloadOfDelayLoadedDLL>
+      <AdditionalLibraryDirectories>$(ProjectDir)\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -97,6 +98,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AIPBuildPlans.cpp" />
+    <ClCompile Include="AIPCollectFieldPoolPlan.cpp" />
     <ClCompile Include="AIPIfCondition.cpp" />
     <ClCompile Include="AIPlanners.cpp" />
     <ClCompile Include="AIPSchedPlan.cpp" />
@@ -105,6 +108,8 @@
     <ClCompile Include="TeamOverwatch.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AIPBuildPlans.h" />
+    <ClInclude Include="AIPCollectFieldPoolPlan.h" />
     <ClInclude Include="AIPGlobals.h" />
     <ClInclude Include="AIPIfCondition.h" />
     <ClInclude Include="AIPlanners.h" />

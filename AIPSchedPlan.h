@@ -4,7 +4,6 @@
 #include "AIPGlobals.h"
 #include "AIPIfCondition.h"
 
-
 class AIPSchedPlan
 {
 public:
@@ -48,15 +47,13 @@ public:
     static Vector StagePoints[AIPGlobals::MAX_STAGE_POINTS];
     static int StagePointCount;
 
-    static void ClearPlans(int team);
-    static void LoadPlans(const char* cfg, int team);
     static void ReleaseUnits(int team, int priority);
     static void ReleaseFinishedUnits(int team, int priority);
 
     AIPSchedPlan(int team);
     virtual ~AIPSchedPlan() = default;
 
-    virtual void Init(unsigned long cfg, unsigned long section) = 0;
+    virtual void Init(const char* cfg, const char* section) = 0;
     virtual void Done() = 0;
 
     virtual bool Execute() = 0;
@@ -77,22 +74,38 @@ public:
     {
     }
 
-    virtual void ClaimTargets() = 0;
-    virtual void ClaimDefendees() = 0;
-    virtual void ReleaseUnits() = 0;
-    virtual void ReleaseFinishedUnits() = 0;
+    virtual void ClaimTargets() 
+    {
+    }
+
+    virtual void ClaimDefendees()
+    {
+    }
+
+    virtual void ReleaseUnits()
+    {
+    }
+
+    virtual void ReleaseFinishedUnits()
+    {
+    };
 
     // Use Handle instead of Craft as we don't have access to the Craft object.
     Handle FindConstructionRig();
 
     void InitBuild();
-    void StartBuild();
+    void StartBuild(char* objClass);
     void CheckBuild();
+
+    int BuilderSlot(const char* objClass);
+    int SubmitBuild(const char* objClass, int priority);
 
     bool ScrapSatisfied(const int curScrap, const int curTotalScrap) const;
     bool PowerSatisfied(const int curPower, const int curTotalPower) const;
     bool HisScrapSatisfied(const int curScrap, const int curTotalScrap) const;
     bool HisPowerSatisfied(const int curPower, const int curTotalPower) const;
+
+    bool DidConditionsFail();
 
     static AIPGlobals::PriorityGroup& FindGroup(int team, int priority);
 
@@ -129,7 +142,7 @@ public:
     static void CommitBuild(int team, int slot);
 
     static Handle FindNearestTarget(int team, const char* targetClass, const Vector& start, bool checkProvides);
-    static Handle FIndNearestDeposit(int scavMask, int scavMatch, int scavProvides, int team, const Vector& start);
+    static Handle FindNearestDeposit(int scavMask, int scavMatch, int scavProvides, int team, const Vector& start);
 
     static bool NeedsAmmo(Handle me, float threshold);
     

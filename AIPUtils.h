@@ -8,8 +8,19 @@
 
 #include <ScriptUtils.h>
 
+// Import table from the game, defined here, declared in ScriptUtils.h, note that the time field will always be 0
+// for some reason, if you want the true time value use misnExport.misnImport->time
+MisnImport misnImport{};
+
+// Export table from the DLL, it's not defined in the function block because it needs
+// to stay in scope for the duration of the game.
+MisnExport misnExport{};
+
 namespace AIPUtils
 {
+    // Initial setup for the AIP DLL so ScriptUtils works.
+    AIPUTIL_API void Setup();
+
     // Handles setting a plan for the new AIP system.
     AIPUTIL_API void SetPlan(const char* aipCfg, const int teamNum);
     

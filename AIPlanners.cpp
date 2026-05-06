@@ -56,12 +56,14 @@ void AIPlanners::SetPlan(const char* aipCfg, const int teamNum)
         return;
     }
         
+    TeamOverwatch* thisTeam = &AIPGlobals::TeamOverwatchState[teamNum];
+
     if (aipCfg == nullptr || aipCfg[0] == '\0')
     {
         // TRACE((team, " *** Clearing for team %d. turnNow = %d World=%d", team, TimeManager::Get().GetTurnNow(), TimeManager::Get().GetTurnWorld()));
         exu2::PrintConsoleMessage("SetPlan received an empty AIP file. Team: {} is now free.", teamNum);
         ClearPlanItems(teamNum);
-        AIPSchedPlan::ClearPlans(teamNum);
+        thisTeam->ClearPlans();
         return;
     }
         
@@ -75,11 +77,10 @@ void AIPlanners::SetPlan(const char* aipCfg, const int teamNum)
     exu2::PrintConsoleMessage("SetPlan({}, {})", aipCfg, teamNum);
         
     ClearPlanItems(teamNum);
-    AIPSchedPlan::ClearPlans(teamNum);
+    thisTeam->ClearPlans();
     
     strncpy_s(AIPGlobals::LastPlanFile[teamNum], aipCfg, _TRUNCATE);
     strncpy_s(AIPGlobals::LastAIPFileForDLL[teamNum], aipCfg, _TRUNCATE);
-    strncpy_s(AIPGlobals::SchedTeams[teamNum].AIPName, aipCfg, _TRUNCATE);
     
     if (AIPGlobals::AIPDebugTeam < 0 || AIPGlobals::AIPDebugTeam == teamNum)
     {
@@ -94,7 +95,62 @@ void AIPlanners::SetPlan(const char* aipCfg, const int teamNum)
         }
     }
     
-    AIPSchedPlan::LoadPlans(aipCfg, teamNum);
+    if (!OpenODF(aipCfg))
+    {
+        exu2::PrintConsoleMessage("AIP ERROR: AIP file {} not found!", aipCfg);
+        return;
+    }
+
+    thisTeam->Setup(teamNum);
+    thisTeam->LoadTuning(aipCfg);
+    thisTeam->FirstLoad();
+    thisTeam->LoadMatches();
+    thisTeam->LoadPlanNames();
+    thisTeam->LoadScheduledPlans();
+
+    /* TODO: Find an alternative for this logging for the AIP.
+    TRACE((team, "\n\n\n***************************************************\nLoadPlans - cfg(%s) team(%d)\n", cfg, team));
+    LOG_DIAG(("SetAIP - cfg(%s) team(%d)", cfg, team));
+    if (schedLogs[team] != NULL)
+    {
+        fflush(schedLogs[team]);
+    }
+    */
+
+    // TODO: Ask VT about "LuaManager" and see if it's available. If not, I think we can easily work around this
+    // based on the context.
+
+    // Need to see if PriorityGroups is used anywhere. Will keep it commented out for now.
+    //priorityGroups[team].clear();
+    //int group = 0;
+    //while (true)
+    //{
+    //    int groupPriority;
+    //    GroupType groupType;
+    //    char field[ODF_MAX_LEN];
+    //    char str[ODF_MAX_LEN];
+    //    //
+    //    ++group;
+    //    sprintf_s(field, "groupPriority%d", group);
+    //    field[sizeof(field) - 1] = 0;
+    //    if (!ParameterDB::GetInt(cfgCrc, 0x3B8E7EE1 /* "Start" */, field, &groupPriority, 0))
+    //        break;
+    //    sprintf_s(field, "groupType%d", group);
+    //    field[sizeof(field) - 1] = 0;
+    //    ParameterDB::GetString(cfgCrc, 0x3B8E7EE1 /* "Start" */, field, sizeof(str), str, "loop");
+    //    if (_stricmp(str, "loop") == 0)
+    //        groupType = PRI_GRP_LOOP;
+    //    else if (_stricmp(str, "select") == 0)
+    //        groupType = PRI_GRP_SELECT;
+    //    else
+    //        groupType = PRI_GRP_NORMAL;
+    //    PriorityGroup group(groupPriority, groupType);
+    //    priorityGroups[team].push_back(group);
+    //}
+
+    // Clean up.
+    CloseODF(aipCfg);
+
     std::sort(&AIPGlobals::SchedPlan[teamNum][0], &AIPGlobals::SchedPlan[teamNum][AIPGlobals::MAX_PLANS], SchedCompare);
     AIPGlobals::LastAIPTeam = teamNum;
 }

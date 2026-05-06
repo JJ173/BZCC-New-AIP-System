@@ -4,6 +4,7 @@
 #include <ScriptUtils.h>
 #include <utility>
 #include <vector>
+#include <string>
 
 class TeamOverwatch;
 class AIPSchedPlan;
@@ -12,13 +13,18 @@ namespace AIPGlobals
 {
     constexpr auto StartString = "Start";
     constexpr auto IdleDispatcherString = "IdleDispatcher";
+    constexpr auto CheatString = "Cheat";
+    constexpr auto MatchString = "Match";
 
     constexpr int MAX_PLAN_CONDITIONS = 16;
     constexpr int MAX_UNITS_PER_TEAM = 128;
+    constexpr int MAX_PLAN_NAME_LENGTH = 128;
     constexpr int MAX_PLANS = 1024;
     constexpr int MAX_POSSIBLE = 1024;
     constexpr int MAX_RESPONSES = 8;
     constexpr int MAX_STAGE_POINTS = 32;
+    constexpr int MAX_MATCHES = 99;
+    constexpr int IGNORE_POWER = -9999;
 
     // Unsure what the MAX_WORLDS const is from context. Perhaps 3 given what Ken explained with lockstep.
     // For now, MAX_WORLDS has been set to 3. We'll adjust as needed if something breaks.
@@ -188,14 +194,14 @@ namespace AIPGlobals
 
     struct MatchTargetInfo
     {
-        unsigned long TargetBaseODFCrc;
+        char TargetBaseODF[ODF_MAX_LEN] = {};
         char TargetBaseCfg[ODF_MAX_LEN] = {};
 
         std::vector<MatchResponseInfo> Responses;
 
         MatchTargetInfo()
         {
-            TargetBaseODFCrc = 0;
+            TargetBaseODF[0] = 0;
             TargetBaseCfg[0] = 0;
         }
     };
@@ -204,28 +210,6 @@ namespace AIPGlobals
     {
         std::vector<MatchTargetInfo> Targets;
     };
-
-    struct SchedTeam
-    {
-        char AIPName[ODF_MAX_LEN] = {};
-        const char* ScavClass;
-        const char* ConsClass;
-        int MoneyAmount;
-        int MoneyDelay;
-        long MoneyTime;
-
-        SchedTeam()
-        {
-            AIPName[0] = 0;
-            ScavClass = nullptr;
-            ConsClass = nullptr;
-            MoneyAmount = 0;
-            MoneyDelay = 0;
-            MoneyTime = 0;
-        }
-    };
-
-    extern SchedTeam SchedTeams[MAX_TEAMS];
 
     typedef std::vector<Handle> HandleList;
     typedef std::vector<unsigned long> ObjClassCRCList;
@@ -242,6 +226,7 @@ namespace AIPGlobals
 
     inline float GridsPerMeter = 0.0f;
     inline Vector CompareOrigin;
+    inline int CurrentGameTurn = 0;
 
     inline std::vector<GameObjectInfo>& GetAllGameObjects();
     inline std::vector<GameObjectInfo>& GetAllVehicles();
@@ -250,6 +235,7 @@ namespace AIPGlobals
     inline int ConstructorReserveScrap[MAX_TEAMS];
     inline int ConstructorReservePriority[MAX_TEAMS];
     inline int ConstructorReserveTime[MAX_TEAMS];
+    inline bool DefaultCheckProvides[MAX_TEAMS];
 
     inline int AIPDebugTeam;
     inline const char* FailedPlanClass;
@@ -264,13 +250,13 @@ namespace AIPGlobals
     inline Vector TGTCenters[MAX_TEAMS];
     inline std::vector<Handle> AttackTargets[MAX_TEAMS];
     inline std::vector<Handle> DefendTargets[MAX_TEAMS];
-    inline std::vector<BuildRequest> BuildRequests[MAX_TEAMS];
+
+    inline std::vector<BuildRequest> BuildRequests;
 
     inline char LastPlanFile[MAX_TEAMS][ODF_MAX_LEN];
     inline char LastAIPFileForDLL[MAX_TEAMS][ODF_MAX_LEN];
 
     inline AIPSchedPlan* SchedPlan[MAX_TEAMS][MAX_PLANS];
-    inline SchedTeam SchedTeams[MAX_TEAMS];
 
     extern TeamOverwatch TeamOverwatchState[MAX_TEAMS];
 }
@@ -329,7 +315,7 @@ namespace AIPGlobalUtils
 
         return x;
     }
-    
+ 
     static bool ComparePoints(const Vector& a, const Vector& b)
     {
         const float d1 = GetDistance2DSquared(a, AIPGlobals::CompareOrigin);
