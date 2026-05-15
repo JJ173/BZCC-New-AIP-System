@@ -1,18 +1,36 @@
 ﻿#pragma once
 
-#include <ScriptUtils.h>
-#include "AIPGlobals.h"
-#include "AIPIfCondition.h"
+#include <memory>
+#include <cstdint>
+#include <vector>
+#include <format>
+#include <ranges>
+#include <string>
+
+#include "AIPGlobals.hpp"
+#include "AIPIfCondition.hpp"
+#include "BuildRequest.hpp"
+#include "Producer.hpp"
+#include "Objects.hpp"
+
+class TeamOverwatch;
+
+// ==================================================
+// Base Class
+// ==================================================
 
 class AIPSchedPlan
 {
 public:
-    int BuildId;
+    TeamOverwatch* MyTeamOverwatch;
+
+    Handle ProducerHandle;
     Handle BuildHandle;
 
+    int BuildId;
     int Team;
     int Priority;
-    AIPIfCondition conditions[AIPGlobals::MAX_PLAN_CONDITIONS];
+    AIPIfCondition conditions[Constants::MAX_PLAN_CONDITIONS];
     bool BuildIfNoIdle;
     bool ContinueEvenIfFail;
 
@@ -40,20 +58,20 @@ public:
     // char PlanType[MAX_ODF_LENGTH];
     // char Section[MAX_ODF_LENGTH];
 
-    static int PlanTimes[AIPGlobals::MAX_WORLDS];
-    static int TargetUpdateTimes[AIPGlobals::MAX_WORLDS];
+    int PlanTimes[Constants::MAX_WORLDS];
+    int TargetUpdateTimes[Constants::MAX_WORLDS];
 
     // TODO: Update this to use the team numbers so maps with multiple AIPs can have individual staging paths.
-    static Vector StagePoints[AIPGlobals::MAX_STAGE_POINTS];
+    static Vector StagePoints[Constants::MAX_STAGE_POINTS];
     static int StagePointCount;
 
     static void ReleaseUnits(int team, int priority);
     static void ReleaseFinishedUnits(int team, int priority);
 
-    AIPSchedPlan(int team);
+    AIPSchedPlan(int team, TeamOverwatch* myTeamOverwatch);
     virtual ~AIPSchedPlan() = default;
 
-    virtual void Init(const char* cfg, const char* section) = 0;
+    virtual void Init(std::string cfg, std::string section) = 0;
     virtual void Done() = 0;
 
     virtual bool Execute() = 0;
@@ -62,17 +80,22 @@ public:
     virtual const char* GetPlanName() = 0;
     virtual void ReleaseHandle(void* plan, int handle) = 0;
 
-    virtual void Load()
-    {
-    }
+    //virtual void Load(ILoadSaveVisitor& visitor)
+    //{
+    //    visitor.in(&buildId, sizeof(buildId), "buildId");
+    //    visitor.in(&buildHandle, sizeof(buildHandle), "buildHandle");
+    //}
 
-    virtual void Save()
-    {
-    }
+    //virtual void Save(ILoadSaveVisitor& visitor)
+    //{
+    //    visitor.out(&buildId, sizeof(buildId), "buildId");
+    //    visitor.out(&buildHandle, sizeof(buildHandle), "buildHandle");
+    //}
 
-    virtual void PostLoad()
-    {
-    }
+    //virtual void PostLoad(ILoadSaveVisitor& visitor)
+    //{
+    //    buildHandle = ConvertHandle(buildHandle);
+    //}
 
     virtual void ClaimTargets() 
     {
@@ -90,15 +113,22 @@ public:
     {
     };
 
+    int SubmitBuildRequest(const char* objOdf);
+
+    // ==================================================
+    // Old Build Methods
+    // ==================================================
+
     // Use Handle instead of Craft as we don't have access to the Craft object.
     Handle FindConstructionRig();
 
     void InitBuild();
-    void StartBuild(char* objClass);
-    void CheckBuild();
+    void StartBuild(const char* objOdf);
+    bool CheckBuild();
 
-    int BuilderSlot(const char* objClass);
-    int SubmitBuild(const char* objClass, int priority);
+    void UpdateBuildStatus();
+
+    Producer* BuilderSlot(const char* objOdf);
 
     bool ScrapSatisfied(const int curScrap, const int curTotalScrap) const;
     bool PowerSatisfied(const int curPower, const int curTotalPower) const;
@@ -107,7 +137,7 @@ public:
 
     bool DidConditionsFail();
 
-    static AIPGlobals::PriorityGroup& FindGroup(int team, int priority);
+    static PriorityGroup& FindGroup(int team, int priority);
 
     static bool IsBase(int team, int slot, Vector& location);
     static void FindBase(int team, Vector& location);
@@ -133,43 +163,35 @@ public:
 
     static int GetSeqNo(Handle me);
 
-    static Handle* FindScrap(int scavMask, int scavMatch, int scavProvides, int team, const Vector& start);
-    static Handle* FindIdleUnit(int team, const char* objClass, bool checkProvides,
+    static Handle FindScrap(int scavMask, int scavMatch, int scavProvides, int team, const Vector& start);
+    static Handle FindIdleUnit(int team, const char* objClass, bool checkProvides,
                                 const AIPGlobals::HandleList& excludeList, bool LookAtIsIdle = false);
-    static Handle* FindIdleUnit(int team, const char* objClass, float ammoRatio, bool checkProvides,
+    static Handle FindIdleUnit(int team, const char* objClass, float ammoRatio, bool checkProvides,
                                 const AIPGlobals::HandleList& excludeList, bool LookAtIsIdle = false);
 
     static void CommitBuild(int team, int slot);
 
     static Handle FindNearestTarget(int team, const char* targetClass, const Vector& start, bool checkProvides);
-    static Handle FindNearestDeposit(int scavMask, int scavMatch, int scavProvides, int team, const Vector& start);
+    static Deposit* FindNearestDeposit(int scavMask, int scavMatch, int scavProvides, int team, const Vector& start);
 
     static bool NeedsAmmo(Handle me, float threshold);
     
-    static Handle* GetLiveObject(Handle me, int checkTeam = -1);
+    static Handle GetLiveObject(Handle me, int checkTeam = -1);
     static int CountMyUnits(int team, const char* objClass);
     static int CountMyUnits(int team, const char* objClass, float ammoRatio);
 
     // This is likely going to be the method from VT's Exus.
     static bool GoodSpot(int team, const char* objClass, Vector& pos, const Vector& front);
-    static void GetClassAndUpgradeCRCs(const char* objClass, AIPGlobals::ObjClassCRCList& list);
-    static bool CanBuild(Handle* builder, const char* itemClass, int priority);
 
     static void ClaimTarget(Handle* target, int team);
     static void UpdateTargets(int team);
     static void ClaimDefendee(Handle* target, int team);
     static void SubMultiPlayerClass(const char* objClass);
 
-    static bool UpdateBuild(AIPGlobals::BuildRequest& req, bool checkProvides);
-    static void UpdateBuilds(bool checkProvides);
-
-    static void GetBuildStatus(int& buildId, Handle& handle, int priority);
-
-    static void CancelBuild(const AIPGlobals::BuildRequest* request);
+    static void CancelBuild(const BuildRequest* request);
     static void CancelBuild(int buildId);
     static void CancelAllBuilds(int team);
 
-    static AIPGlobals::TTB_RESULT TryToBuild(int team, int slot, const char* objClass, int priority);
     static bool WaitBuild(int team, int slot, const char* objClass, Handle& handle, bool checkProvides);
 
     static bool PlayerControlled(int team);
@@ -182,3 +204,6 @@ public:
     static bool Closer(Handle* firstHandle, Handle* secondHandle, int team);
     static bool CanShoot(Vector& pos, Handle* object);
 };
+
+#include "BuilderPlans.hpp"
+#include "CollectorPlans.hpp"

@@ -1,5 +1,6 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include <ExtraUtils.h>
+#include <ScriptUtils.h>
 
 #include <Windows.h>
 #include <delayimp.h>

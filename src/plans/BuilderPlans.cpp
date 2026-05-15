@@ -1,19 +1,19 @@
-#include "AIPBuildPlans.h"
-
-#include <format>
-#include <ranges>
-#include <string>
+#include "BuilderPlans.hpp"
+#include "TeamOverwatch.hpp"
 
 // ==================================================
 // BuilderPlan
 // ==================================================
 
-void BuilderPlan::Init(const char* cfg, const char* section)
+void BuilderPlan::Init(std::string cfg, std::string section)
 {
 	BuildConsClass[0] = 0;
 
-	GetODFBool(cfg, section, "buildIfNoIdle", &BuildIfNoIdle, false);
-	GetODFString(cfg, section, "consClass", sizeof(BuildConsClass), BuildConsClass, BuildConsClass);
+	const char* cfgCString = cfg.c_str();
+	const char* sectionCString = section.c_str();
+
+	GetODFBool(cfgCString, sectionCString, "buildIfNoIdle", &BuildIfNoIdle, false);
+	GetODFString(cfgCString, sectionCString, "consClass", sizeof(BuildConsClass), BuildConsClass, BuildConsClass);
 
 	for (int i : std::views::iota(1))
 	{
@@ -22,13 +22,13 @@ void BuilderPlan::Init(const char* cfg, const char* section)
 		BuildInfo info;
 		info.BuildState = BUILD_CHECK;
 
-		if (!GetODFString(cfg, section, typeField.c_str(), sizeof(info.ObjClass), info.ObjClass, ""))
+		if (!GetODFString(cfgCString, sectionCString, typeField.c_str(), sizeof(info.ObjClass), info.ObjClass, ""))
 		{
 			break;
 		}
 
 		std::string countField = std::format("buildCount{}", i);
-		GetODFInt(cfg, section, countField.c_str(), &info.Count, 1);
+		GetODFInt(cfgCString, sectionCString, countField.c_str(), &info.Count, 1);
 
 		BuildList.push_back(std::move(info));
 	}
@@ -45,7 +45,6 @@ bool BuilderPlan::Execute()
 	{
 		Stop(BuildHandle, 0);
 		BuildHandle = 0;
-		BuildId = 0;
 	}
 
 	std::vector<BuildInfo>::iterator i;
@@ -67,7 +66,7 @@ bool BuilderPlan::Execute()
 // BuildMimimums
 // ==================================================
 
-void BuildMinimums::Init(const char* cfg, const char* section)
+void BuildMinimums::Init(std::string cfg, std::string section)
 {
 	BuilderPlan::Init(cfg, section);
 }

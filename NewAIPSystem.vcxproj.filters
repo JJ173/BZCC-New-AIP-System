@@ -18,51 +18,84 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AIPUtils.cpp">
+    <ClCompile Include="src\core\AIPGlobals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AIPIfCondition.cpp">
+    <ClCompile Include="src\plans\BuilderPlans.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AIPlanners.cpp">
+    <ClCompile Include="src\plans\CollectorPlans.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AIPSchedPlan.cpp">
+    <ClCompile Include="src\utils\AIPIfCondition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TeamOverwatch.cpp">
+    <ClCompile Include="src\core\AIPlanners.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AIPBuildPlans.cpp">
+    <ClCompile Include="src\plans\AIPSchedPlan.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AIPCollectFieldPoolPlan.cpp">
+    <ClCompile Include="src\utils\AIPUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\TeamOverwatch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AIPUtils.h">
+    <ClInclude Include="src\core\AIPGlobals.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AIPGlobals.h">
+    <ClInclude Include="src\plans\BuilderPlans.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AIPIfCondition.h">
+    <ClInclude Include="src\plans\CollectorPlans.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AIPlanners.h">
+    <ClInclude Include="src\utils\AIPIfCondition.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AIPSchedPlan.h">
+    <ClInclude Include="src\core\AIPlanners.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TeamOverwatch.h">
+    <ClInclude Include="src\plans\AIPSchedPlan.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AIPBuildPlans.h">
+    <ClInclude Include="src\utils\AIPUtils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AIPCollectFieldPoolPlan.h">
+    <ClInclude Include="src\models\BuildRequest.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\Constants.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\Deposit.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\Enums.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\Maps.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\Objects.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\PriorityGroup.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\Producer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\TeamOverwatch.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\Utilities.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\Vehicle.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -61,7 +61,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;CPPDYNAMICLIBRARYTEMPLATE_EXPORTS;_WINDOWS;_USRDLL;AIPUTIL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(ProjectDir)\src\core;$(ProjectDir)\src\plans;$(ProjectDir)\src\models;$(ProjectDir)\src\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -84,7 +84,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;CPPDYNAMICLIBRARYTEMPLATE_EXPORTS;_WINDOWS;_USRDLL;AIPUTIL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(ProjectDir)\src\core;$(ProjectDir)\src\plans;$(ProjectDir)\src\models;$(ProjectDir)\src\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -98,24 +98,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AIPBuildPlans.cpp" />
-    <ClCompile Include="AIPCollectFieldPoolPlan.cpp" />
-    <ClCompile Include="AIPIfCondition.cpp" />
-    <ClCompile Include="AIPlanners.cpp" />
-    <ClCompile Include="AIPSchedPlan.cpp" />
-    <ClCompile Include="AIPUtils.cpp" />
+    <ClCompile Include="src\core\AIPGlobals.cpp" />
+    <ClCompile Include="src\plans\BuilderPlans.cpp" />
+    <ClCompile Include="src\plans\CollectorPlans.cpp" />
+    <ClCompile Include="src\utils\AIPIfCondition.cpp" />
+    <ClCompile Include="src\core\AIPlanners.cpp" />
+    <ClCompile Include="src\plans\AIPSchedPlan.cpp" />
+    <ClCompile Include="src\utils\AIPUtils.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="TeamOverwatch.cpp" />
+    <ClCompile Include="src\core\TeamOverwatch.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AIPBuildPlans.h" />
-    <ClInclude Include="AIPCollectFieldPoolPlan.h" />
-    <ClInclude Include="AIPGlobals.h" />
-    <ClInclude Include="AIPIfCondition.h" />
-    <ClInclude Include="AIPlanners.h" />
-    <ClInclude Include="AIPSchedPlan.h" />
-    <ClInclude Include="AIPUtils.h" />
-    <ClInclude Include="TeamOverwatch.h" />
+    <ClInclude Include="src\core\AIPGlobals.hpp" />
+    <ClInclude Include="src\plans\BuilderPlans.hpp" />
+    <ClInclude Include="src\plans\CollectorPlans.hpp" />
+    <ClInclude Include="src\utils\AIPIfCondition.hpp" />
+    <ClInclude Include="src\core\AIPlanners.hpp" />
+    <ClInclude Include="src\plans\AIPSchedPlan.hpp" />
+    <ClInclude Include="src\utils\AIPUtils.hpp" />
+    <ClInclude Include="src\models\BuildRequest.hpp" />
+    <ClInclude Include="src\utils\Constants.hpp" />
+    <ClInclude Include="src\models\Deposit.hpp" />
+    <ClInclude Include="src\utils\Enums.hpp" />
+    <ClInclude Include="src\utils\Maps.hpp" />
+    <ClInclude Include="src\models\Objects.hpp" />
+    <ClInclude Include="src\models\PriorityGroup.hpp" />
+    <ClInclude Include="src\models\Producer.hpp" />
+    <ClInclude Include="src\core\TeamOverwatch.hpp" />
+    <ClInclude Include="src\utils\Utilities.hpp" />
+    <ClInclude Include="src\models\Vehicle.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

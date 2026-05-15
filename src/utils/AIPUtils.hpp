@@ -7,6 +7,9 @@
 #endif
 
 #include <ScriptUtils.h>
+#include <ExtraUtils.h>
+#include "AIPGlobals.hpp"
+#include "AIPlanners.hpp"
 
 // Import table from the game, defined here, declared in ScriptUtils.h, note that the time field will always be 0
 // for some reason, if you want the true time value use misnExport.misnImport->time
